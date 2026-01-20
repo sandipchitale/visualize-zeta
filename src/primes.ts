@@ -113,7 +113,7 @@ export function initPrimes(
         div.style.fontWeight = 'bold';
         
         const label = new CSS2DObject(div);
-        label.position.set(p, 1, 0); 
+        label.position.set(p, -2, 0); 
         scene.add(label);
         createdObjects.push(label);
     });
@@ -131,7 +131,7 @@ export function initPrimes(
         div.className = 'label';
         div.textContent = i.toString();
         const label = new CSS2DObject(div);
-        label.position.set(i, -2, 0);
+        label.position.set(i, -5, 0);
         scene.add(label);
         createdObjects.push(label);
     }
@@ -240,6 +240,54 @@ export function initPrimes(
         waveGroup.add(labelObj);
     });
 
+    // --- 7. Riemann Sum (Li(x) - Sum(Waves)) (Yellow) ---
+    // This demonstrates the "correction" in action.
+    const sumPoints: THREE.Vector3[] = [];
+    // Recalculate Li(x) points to match sampling resolution or just reuse logic
+    let integralSum = 0; // for Li
+    for (let x = 2; x <= maxN; x += 0.2) {
+        // Calculate Li(x)
+        // Simple integration from 2 to x
+        // We know integral(1/ln t) dt roughly. 
+        // Let's just use the JS Math.log approximation for each step to be consistent with previous loop
+        // But for consistency, we should re-compute Li at this specific x or interpolate.
+        // A direct approximation Li(x) ~ x/ln(x) + ... is not enough.
+        // Let's do a mini-integration to be accurate.
+        // Or simpler: logarithmic integral function approximation: li(x) approx x/ln x * sum(k!/(ln x)^k)...
+        // Actually, let's just use the same "dt" integration method but strictly for this x loop.
+        
+        // Actually, we can just use the known series or a numerical integration on the fly.
+        // Numerical integration from 2 to x:
+        let liVal = 0;
+        const subDt = 0.1;
+        for(let t=2; t<x; t+=subDt) {
+            liVal += (1/Math.log(t)) * subDt;
+        }
+
+        // Subtract Waves: Sum(Li(x^rho) + Li(x^rho_bar)) 
+        // approximate: 2 * sqrt(x)/gamma * sin(gamma * ln x) (subtracted)
+        // See Riemann explicit formula. The sum is over non-trivial zeros.
+        // We sum the pairs (gamma and -gamma) together as one real term:
+        // - 2 * sqrt(x)/|gamma| * sin(gamma * ln x)
+        let correction = 0;
+        gammas.forEach(gamma => {
+            const amp = Math.sqrt(x) / gamma;
+            const phase = gamma * Math.log(x);
+            // Term for the pair: -2 * amp * sin(phase)
+             const waveY = -2 * amp * Math.sin(phase);
+             correction += waveY;
+        });
+
+        // Add to Li(x)
+        const totalY = liVal + correction;
+        sumPoints.push(new THREE.Vector3(x, totalY, 0));
+    }
+
+    const sumGeo = new THREE.BufferGeometry().setFromPoints(sumPoints);
+    const sumMat = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 2 }); // Yellow
+    const sumLine = new THREE.Line(sumGeo, sumMat);
+    scene.add(sumLine);
+
     // --- UI: Legend ---
     const legend = document.createElement('div');
     legend.className = 'legend-box';
@@ -248,6 +296,7 @@ export function initPrimes(
         <div class="legend-item"><div class="color-dot" style="background:#ff0000"></div>Primes (Points)</div>
         <div class="legend-item"><div class="color-dot" style="background:cyan"></div>Prime Counting Function π(x)</div>
         <div class="legend-item"><div class="color-dot" style="background:orange"></div>Logarithmic Integral Li(x)</div>
+        <div class="legend-item"><div class="color-dot" style="background:yellow"></div>Riemann Sum (Li(x) + Waves)</div>
         <div class="legend-item"><div class="color-dot" style="background:#88ff88"></div>Non-Trivial Zeros of zeta function (Pos imaginary)</div>
         <div class="legend-item"><div class="color-dot" style="background:#ff8888"></div>Non-Trivial Zeros of zeta function (Neg imaginary)</div>
     `;

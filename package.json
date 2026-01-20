@@ -1,0 +1,20 @@
+{
+  "name": "visualize-zeta",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@types/three": "^0.182.0",
+    "mathjs": "^15.1.0",
+    "three": "^0.182.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3",
+    "vite": "^7.3.1"
+  },
+  "private": true
+}

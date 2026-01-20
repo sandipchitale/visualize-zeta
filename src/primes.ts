@@ -177,14 +177,11 @@ export function initPrimes(
     const liPoints: THREE.Vector3[] = [];
     const dt = 0.1;
     let integral = 0; // Starting from 2
-    // We'll approximate Li(x) = integral_2^x dt/ln(t) + Li(2). Li(2) ~ 1.045, often ignored or set to 0 for offset.
-    // For visualization, starting at 0 is fine, or we can just integrate from 2.
-    // Let's integrate carefully.
     
     liPoints.push(new THREE.Vector3(2, 0, 0)); 
     
+    // Calculate Li(x) points
     for (let x = 2; x <= maxN; x += dt) {
-        // Simpson's rule or trapezoidal for step
         const mid = x + dt / 2;
         const val = 1 / Math.log(mid);
         integral += val * dt;
@@ -195,7 +192,53 @@ export function initPrimes(
     const liMaterial = new THREE.LineBasicMaterial({ color: 0xFFA500 }); // Orange
     const liLine = new THREE.Line(liGeometry, liMaterial);
     scene.add(liLine);
+
+    // --- 6. Explicit Formula Waves (The "Music") ---
+    // We will plot the terms -Re(Li(x^rho)) which are roughly -sqrt(x)/|rho| * sin(gamma * ln(x))
+    // We'll plot them individually to show the "waves".
+    // First 10 Zeros (imaginary parts gamma)
+    const gammas = [14.13, 21.02, 25.01, 30.42, 32.93, 37.58, 40.91, 43.32, 48.00, 49.77];
+    // Include negatives
+    const allGammas = [...gammas, ...gammas.map(g => -g)];
     
+    const waveGroup = new THREE.Group();
+    scene.add(waveGroup);
+
+    allGammas.forEach((gamma) => {
+        const wavePoints: THREE.Vector3[] = [];
+        
+        // Determine Z-offset based on magnitude.
+        // Smallest |gamma| should be closest to Real Axis (Z=0).
+        // Positive gammas go to Positive Z, Negative to Negative Z.
+        const rank = gammas.indexOf(Math.abs(gamma)); // 0 for 14.13, 9 for 49.77
+        const sign = gamma > 0 ? 1 : -1;
+        const zOffset = sign * (rank + 1) * 4; // Spacing of 4 units
+
+        for (let x = 2; x <= maxN; x += 0.2) {
+            // Term: -Li(x^rho). Approximate as -sqrt(x)/gamma * sin(gamma * ln x)
+            const amp = Math.sqrt(x) / Math.abs(gamma);
+            const phase = gamma * Math.log(x);
+            // Sign: The sum is subtracted. 
+            const waveY = -amp * Math.sin(phase); 
+            
+            wavePoints.push(new THREE.Vector3(x, waveY, zOffset));
+        }
+        
+        const waveGeo = new THREE.BufferGeometry().setFromPoints(wavePoints);
+        const color = gamma > 0 ? 0x88ff88 : 0xff8888;
+        const waveMat = new THREE.LineBasicMaterial({ color: color, opacity: 0.5, transparent: true });
+        waveGroup.add(new THREE.Line(waveGeo, waveMat));
+
+        // Label at end of wave
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'label';
+        labelDiv.textContent = `i${gamma.toFixed(2)}`;
+        labelDiv.style.color = gamma > 0 ? '#88ff88' : '#ff8888';
+        labelDiv.style.fontSize = '10px';
+        const labelObj = new CSS2DObject(labelDiv);
+        labelObj.position.set(maxN + 2, 0, zOffset);
+        waveGroup.add(labelObj);
+    });
 
     // --- UI: Legend ---
     const legend = document.createElement('div');
@@ -204,8 +247,9 @@ export function initPrimes(
         <h1>Prime Number Distribution</h1>
         <div class="legend-item"><div class="color-dot" style="background:#ff0000"></div>Primes (Points)</div>
         <div class="legend-item"><div class="color-dot" style="background:cyan"></div>Prime Counting Function π(x)</div>
-        <div class="legend-item"><div class="color-dot" style="background:magenta"></div>Approximation x / ln(x)</div>
         <div class="legend-item"><div class="color-dot" style="background:orange"></div>Logarithmic Integral Li(x)</div>
+        <div class="legend-item"><div class="color-dot" style="background:#88ff88"></div>Non-Trivial Zeros of zeta function (Pos imaginary)</div>
+        <div class="legend-item"><div class="color-dot" style="background:#ff8888"></div>Non-Trivial Zeros of zeta function (Neg imaginary)</div>
     `;
     document.body.appendChild(legend);
 

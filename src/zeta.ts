@@ -171,10 +171,12 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
         const points: THREE.Vector3[] = [];
         const tStep = 0.01; // Higher resolution for smoothness
         const maxT = 60; 
+        const scale = 8; // Match the domain visualization scale
         for (let t = -maxT; t <= maxT; t += tStep) {
             const s = new ComplexNumber(sigma, t);
             const z = zeta(s, 200); 
-            points.push(new THREE.Vector3(z.re, t, z.im)); 
+            // Scale the output value to match the domain scale
+            points.push(new THREE.Vector3(z.re * scale, t, z.im * scale)); 
         }
         return new THREE.Line(
             new THREE.BufferGeometry().setFromPoints(points), 

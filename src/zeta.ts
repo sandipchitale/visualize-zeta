@@ -314,6 +314,23 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
     const liMat = new THREE.LineBasicMaterial({ color: 0xFFA500, linewidth: 2 }); // Orange
     scene.add(new THREE.Line(liGeo, liMat));
 
+    // --- x / ln(x) (Magenta) ---
+    // Simpler approximation
+    const approxPoints: THREE.Vector3[] = [];
+    // Start drawing from x=2
+    approxPoints.push(new THREE.Vector3(startX, 2/Math.log(2) * 2, 0)); 
+
+    for (let x = 2; x <= 13; x += 0.1) {
+        const y = x / Math.log(x);
+        const worldX = ((x) - 0.5) * 8; 
+        const worldY = y * 2; // Scale Y by 2
+        approxPoints.push(new THREE.Vector3(worldX, worldY, 0));
+    }
+    const approxGeo = new THREE.BufferGeometry().setFromPoints(approxPoints);
+    const approxMat = new THREE.LineBasicMaterial({ color: 0xff00ff, linewidth: 2 }); // Magenta
+    scene.add(new THREE.Line(approxGeo, approxMat));
+
+
     // Reference Grids
     // Increase size to see trivial zeros (up to X=-68)
     const gridXZ = new THREE.GridHelper(200, 50, 0xaaaaaa, 0x555555);
@@ -331,6 +348,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
         <div class="legend-item"><div class="color-dot" style="background:red"></div>Primes (Positive Real Axis)</div>
         <div class="legend-item"><div class="color-dot" style="background:cyan"></div>Prime Counting Function π(x)</div>
         <div class="legend-item"><div class="color-dot" style="background:orange"></div>Logarithmic Integral Li(x)</div>
+        <div class="legend-item"><div class="color-dot" style="background:magenta"></div>x / ln(x)</div>
     `;
     document.body.appendChild(legend);
 

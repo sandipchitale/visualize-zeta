@@ -242,6 +242,78 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
     const trivialGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(trivialPos, 3));
     scene.add(new THREE.Points(trivialGeo, zeroMat)); // Reuse yellow material
 
+    // --- Primes & Prime Counting Function (Opposite Side / Positive Real Axis) ---
+    const primes = [2, 3, 5, 7, 11, 13];
+    const primePos: number[] = [];
+    const piPoints: THREE.Vector3[] = [];
+    
+    // Start of step function. Primes start at 2.
+    // Let's start drawing Pi(x) from X corresponding to slightly before 2
+    // p=2 -> X = (2 - 0.5)*8 = 12.
+    // Let's start at X = 0 (Re=0.5)
+    piPoints.push(new THREE.Vector3(0, 0, 0));
+
+    let count = 0;
+    primes.forEach(p => {
+        const x = (p - 0.5) * 8;
+        
+        // 1. Prime Marker on Axis (t=0)
+        primePos.push(x, 0, 0);
+        const labelText = `${p}`;
+        addLabel(labelText, x, -4, 0, '#ff4444'); // Red label below axis (deep)
+
+        // 2. Pi(x) Step Function
+        // Move horizontal to current prime X
+        const lastX = piPoints[piPoints.length - 1].x;
+        const lastY = piPoints[piPoints.length - 1].y;
+        
+        // Horizontal segment
+        piPoints.push(new THREE.Vector3(x, lastY, 0));
+        
+        // Jump up
+        count++;
+        piPoints.push(new THREE.Vector3(x, count * 2, 0)); 
+    });
+    // Extend line a bit after last prime? No, user said stop at 13.
+    // const lastP = primes[primes.length - 1];
+    // const endX = ((lastP + 2) - 0.5) * 8;
+    // piPoints.push(new THREE.Vector3(endX, count * 2, 0));
+
+    // Prime Dots
+    const primeGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(primePos, 3));
+    const primeMat = new THREE.PointsMaterial({ color: 0xff0000, size: 6, sizeAttenuation: false });
+    scene.add(new THREE.Points(primeGeo, primeMat));
+
+    // Pi(x) Line
+    const piGeo = new THREE.BufferGeometry().setFromPoints(piPoints);
+    const piMat = new THREE.LineBasicMaterial({ color: 0x00ffff, linewidth: 2 });
+    scene.add(new THREE.Line(piGeo, piMat));
+
+    // --- Li(x) (Orange) ---
+    // Smooth approximation x / ln(x) or integral 1/ln(t)
+    const liPoints: THREE.Vector3[] = [];
+    const dt = 0.1;
+    let integral = 0; // Li(2) ~ 0
+    
+    // Start drawing from x=2
+    // x=2 -> X = (2 - 0.5)*8 = 12
+    const startX = (2 - 0.5) * 8;
+    liPoints.push(new THREE.Vector3(startX, 0, 0));
+
+    for (let x = 2; x <= 13; x += dt) {
+        const mid = x + dt / 2;
+        const val = 1 / Math.log(mid);
+        integral += val * dt;
+        
+        const worldX = ((x + dt) - 0.5) * 8; // (x - 0.5) * 8
+        const worldY = integral * 2; // Scale Y by 2 to match Pi(x) scale
+        liPoints.push(new THREE.Vector3(worldX, worldY, 0));
+    }
+
+    const liGeo = new THREE.BufferGeometry().setFromPoints(liPoints);
+    const liMat = new THREE.LineBasicMaterial({ color: 0xFFA500, linewidth: 2 }); // Orange
+    scene.add(new THREE.Line(liGeo, liMat));
+
     // Reference Grids
     // Increase size to see trivial zeros (up to X=-68)
     const gridXZ = new THREE.GridHelper(200, 50, 0xaaaaaa, 0x555555);
@@ -256,6 +328,9 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
         <div class="legend-item"><div class="color-dot" style="background:magenta"></div>Zeta Value ζ(1/2 + it)</div>
         <div class="legend-item"><div class="color-dot" style="background:#666"></div>Critical Strip (0 < Re(s) < 1)</div>
         <div class="legend-item"><div class="color-dot" style="background:yellow"></div>Zeros (Trivial & Non-trivial)</div>
+        <div class="legend-item"><div class="color-dot" style="background:red"></div>Primes (Positive Real Axis)</div>
+        <div class="legend-item"><div class="color-dot" style="background:cyan"></div>Prime Counting Function π(x)</div>
+        <div class="legend-item"><div class="color-dot" style="background:orange"></div>Logarithmic Integral Li(x)</div>
     `;
     document.body.appendChild(legend);
 

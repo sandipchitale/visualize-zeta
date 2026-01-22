@@ -272,7 +272,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
         
         // Jump up
         count++;
-        piPoints.push(new THREE.Vector3(x, count * 2, 0)); 
+        piPoints.push(new THREE.Vector3(x, count * 4, 0)); 
     });
     // Extend line a bit after last prime? No, user said stop at 13.
     // const lastP = primes[primes.length - 1];
@@ -306,7 +306,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
         integral += val * dt;
         
         const worldX = ((x + dt) - 0.5) * 8; // (x - 0.5) * 8
-        const worldY = integral * 2; // Scale Y by 2 to match Pi(x) scale
+        const worldY = integral * 4; // Scale Y by 4 to match Pi(x) scale
         liPoints.push(new THREE.Vector3(worldX, worldY, 0));
     }
 
@@ -318,12 +318,12 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
     // Simpler approximation
     const approxPoints: THREE.Vector3[] = [];
     // Start drawing from x=2
-    approxPoints.push(new THREE.Vector3(startX, 2/Math.log(2) * 2, 0)); 
+    approxPoints.push(new THREE.Vector3(startX, 2/Math.log(2) * 4, 0));  
 
     for (let x = 2; x <= 13; x += 0.1) {
         const y = x / Math.log(x);
         const worldX = ((x) - 0.5) * 8; 
-        const worldY = y * 2; // Scale Y by 2
+        const worldY = y * 4; // Scale Y by 4
         approxPoints.push(new THREE.Vector3(worldX, worldY, 0));
     }
     const approxGeo = new THREE.BufferGeometry().setFromPoints(approxPoints);

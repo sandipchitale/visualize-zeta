@@ -212,7 +212,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
 
     // Origin Intersection
     // s=1/2+0i is the INPUT.
-    addLabel('s = 1/2 + 0i', 0, -1, 0, 'cyan');
+    addLabel('s = 1/2 + i0', 0, -2, 0, 'cyan');
 
     // Mark Known Zeroes
     const positiveZeroes = [14.135, 21.02, 25.01, 30.42, 32.93, 37.58, 40.91, 43.32, 48.00, 49.77];
@@ -349,7 +349,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
     addLabel('ζ(s) Plane', 0, 0.5, 105, '#fff'); // Label for horizontal grid
     addLabel('Complex Input Plane', 0, 105, 0.5, '#fff'); // Label for vertical grid
     addLabel('Critical Strip', 0, 72, 0.5, '#fff'); // Label for vertical grid
-    addLabel('0 + i0', -4, -1, 0, '#fff'); // Label origin of s-plane (s=0)
+    addLabel('0 + i0', -4, 0, 0, '#fff'); // Label origin of s-plane (s=0)
 
     // --- UI: Legend ---
     const legend = document.createElement('div');

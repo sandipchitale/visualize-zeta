@@ -82,7 +82,7 @@ function zeta(s: ComplexNumber, terms: number = 100): ComplexNumber {
 
 export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, controls: any) {
     // --- Scene Customization for Zeta ---
-    camera.position.set(2, 40, 60); 
+    camera.position.set(2, 80, 120); 
     camera.lookAt(0.5, 0, 0);
     controls.target.set(0.5, 0, 0);
 
@@ -185,7 +185,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
     }
     
     // Render the Value Trace for Re(s)=0.5 in Magenta (to distinguish from the physical Line)
-    const zetaValueCurve = createZetaCurve(0.5, 0xff00ff); 
+    const zetaValueCurve = createZetaCurve(0.5, 0xff00ff);
     scene.add(zetaValueCurve);
 
     // --- Labels & Visuals ---
@@ -206,13 +206,13 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
     addLabel('Imag(ζ)', 0, 0, 12, '#aaa'); 
     
     // Domain Labels
-    addLabel('s = 1/2 + it', 0, 65, 0, 'cyan'); 
-    addLabel('Re(s) = 0', -4, 65, 0, '#888'); 
-    addLabel('Re(s) = 1', 4, 65, 0, '#888'); 
+    addLabel('s = 1/2 + it', 0, 70, 0, 'cyan');
+    addLabel('Re(s) = 0', -7, 70, 0, '#888');
+    addLabel('Re(s) = 1', 7, 70, 0, '#888');
 
     // Origin Intersection
     // s=1/2+0i is the INPUT.
-    addLabel('s = 1/2 + 0i', 0, 0, 0, 'cyan');
+    addLabel('s = 1/2 + 0i', 0, -1, 0, 'cyan');
 
     // Mark Known Zeroes
     const positiveZeroes = [14.135, 21.02, 25.01, 30.42, 32.93, 37.58, 40.91, 43.32, 48.00, 49.77];
@@ -237,7 +237,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
     trivialZeros.forEach(re => {
         const x = (re - 0.5) * 8;
         trivialPos.push(x, 0, 0); // t=0
-        addLabel(`s=${re}`, x, 4, 0, 'yellow');
+        addLabel(`s=${re}`, x, -8, 0, 'yellow');
     });
     const trivialGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(trivialPos, 3));
     scene.add(new THREE.Points(trivialGeo, zeroMat)); // Reuse yellow material
@@ -260,7 +260,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
         // 1. Prime Marker on Axis (t=0)
         primePos.push(x, 0, 0);
         const labelText = `${p}`;
-        addLabel(labelText, x, -4, 0, '#ff4444'); // Red label below axis (deep)
+        addLabel(labelText, x, -8, 0, '#ff4444'); // Red label below axis (deep)
 
         // 2. Pi(x) Step Function
         // Move horizontal to current prime X
@@ -332,10 +332,25 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
 
 
     // Reference Grids
+    // const gridYZ = new THREE.GridHelper(200, 50, 0xADD8E6, 0x453b08);
+    const gridYZ = new THREE.GridHelper(200, 50, 0x999999, 0x191919);
+    gridYZ.rotation.x = Math.PI / 2;
+    gridYZ.translateX(-4);
+    gridYZ.translateY(-0.05);
+    scene.add(gridYZ);
+
     // Increase size to see trivial zeros (up to X=-68)
-    const gridXZ = new THREE.GridHelper(200, 50, 0xaaaaaa, 0x555555);
+    // const gridXZ = new THREE.GridHelper(200, 50, 0xaaaaaa, 0x580f41);
+    const gridXZ = new THREE.GridHelper(200, 50, 0x999999, 0x202020);
     scene.add(gridXZ);
-    
+
+
+
+    addLabel('ζ(s) Plane', 0, 0.5, 105, '#fff'); // Label for horizontal grid
+    addLabel('Complex Input Plane', 0, 105, 0.5, '#fff'); // Label for vertical grid
+    addLabel('Critical Strip', 0, 72, 0.5, '#fff'); // Label for vertical grid
+    addLabel('0 + i0', -4, -1, 0, '#fff'); // Label origin of s-plane (s=0)
+
     // --- UI: Legend ---
     const legend = document.createElement('div');
     legend.className = 'legend-box';

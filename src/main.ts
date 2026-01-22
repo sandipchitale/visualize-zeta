@@ -93,4 +93,4 @@ const animate = () => {
 animate();
 
 // Start
-switchTab('primes');
+switchTab('zeta');

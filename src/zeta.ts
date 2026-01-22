@@ -333,7 +333,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
 
     // Reference Grids
     // const gridYZ = new THREE.GridHelper(200, 50, 0xADD8E6, 0x453b08);
-    const gridYZ = new THREE.GridHelper(208, 50, 0x999999, 0x191919);
+    const gridYZ = new THREE.GridHelper(200, 50, 0x999999, 0x191919);
     gridYZ.rotation.x = Math.PI / 2;
     gridYZ.translateX(-4);
     gridYZ.translateY(-0.05);

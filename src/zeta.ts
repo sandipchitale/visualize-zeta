@@ -222,7 +222,7 @@ export function initZeta(scene: THREE.Scene, camera: THREE.PerspectiveCamera, co
     knownZeroes.forEach(t => {
         // Zeros are on the straight line (0, t, 0)
         zeroPositions.push(0, t, 0);
-        addLabel(`i${t.toFixed(1)}`, 0.5, t, 0, 'yellow');
+        addLabel(`i${t.toFixed(1)}`, -2, t - 0.5, 0, 'yellow');
     });
 
     const zeroGeo = new THREE.BufferGeometry();

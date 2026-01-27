@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visualization</title>
+    <!-- Google Fonts: Inter (High Fidelity) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #111;
+        color: white;
+        /* High fidelity font settings */
+        font-family: "Inter", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .label {
+        color: #888;
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        margin-top: -1em;
+      }
+      .prime-label {
+        font-family: "Inter", sans-serif;
+        font-weight: 600;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+      }
+      /* Common Legend Style */
+      .legend-box {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 100;
+        background: rgba(10, 10, 10, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        pointer-events: none;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+      .legend-box h1 {
+        margin: 0 0 12px 0;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: #eee;
+      }
+      .color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-EJ00BVgQ.js"></script>
+  </head>
+  <body>
+  </body>
+</html>
